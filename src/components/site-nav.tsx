@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { NavLink, Link } from "react-router-dom";
 import { ShoppingBag, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useCart } from "@/lib/cart";
@@ -25,14 +25,16 @@ export function SiteNav() {
 
         <nav className="hidden md:flex items-center gap-8 text-sm">
           {links.map((l) => (
-            <Link
+            <NavLink
               key={l.to}
               to={l.to}
-              activeProps={{ className: "text-gold" }}
-              className="text-foreground/75 hover:text-gold transition-colors"
+              end={l.to === "/"}
+              className={({ isActive }) =>
+                `transition-colors ${isActive ? "text-gold" : "text-foreground/75 hover:text-gold"}`
+              }
             >
               {l.label}
-            </Link>
+            </NavLink>
           ))}
         </nav>
 

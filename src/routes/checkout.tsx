@@ -1,17 +1,10 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "react-router-dom";
 import { SiteLayout } from "@/components/site-layout";
 import { useCart } from "@/lib/cart";
 import { useState } from "react";
 import { Lock, CreditCard } from "lucide-react";
 
-export const Route = createFileRoute("/checkout")({
-  component: CheckoutPage,
-  head: () => ({
-    meta: [{ title: "Checkout — Olabisi Olaigbe" }],
-  }),
-});
-
-function CheckoutPage() {
+export default function CheckoutPage() {
   const { detailed, subtotal, clear } = useCart();
   const navigate = useNavigate();
   const [processing, setProcessing] = useState(false);
@@ -40,7 +33,7 @@ function CheckoutPage() {
             connected — this is a UI preview.)
           </p>
           <button
-            onClick={() => navigate({ to: "/shop" })}
+            onClick={() => navigate("/shop")}
             className="mt-10 bg-gold text-primary-foreground font-semibold text-xs tracking-[0.16em] uppercase px-7 py-4 hover:bg-gold-deep transition-colors"
           >
             Keep browsing

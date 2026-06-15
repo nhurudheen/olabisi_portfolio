@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link } from "react-router-dom";
 
 export function SiteFooter() {
   return (
@@ -22,8 +22,8 @@ export function SiteFooter() {
         <div className="text-sm">
           <p className="eyebrow mb-3">Elsewhere</p>
           <ul className="space-y-2 text-foreground/75">
+            <li><a href="https://gidira.com/" target="_blank" rel="noopener noreferrer" className="hover:text-gold">Gidira</a></li>
             <li><a href="#" className="hover:text-gold">LinkedIn</a></li>
-            <li><a href="#" className="hover:text-gold">Instagram</a></li>
             <li><a href="mailto:hello@olabisi.co" className="hover:text-gold">hello@olabisi.co</a></li>
           </ul>
         </div>
