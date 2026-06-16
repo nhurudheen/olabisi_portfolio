@@ -1,49 +1,42 @@
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+
 export type Service = {
   id: string;
+  slug: string | null;
   title: string;
-  description: string;
-  price: string; // display string e.g. "£67", "FREE"
-  free?: boolean;
+  description: string | null;
+  price: number;
+  originalPrice: number | null;
+  isFree: boolean;
 };
 
-export const SERVICE_RECIPIENT = "hello@olabisi.co";
+export function formatPrice(s: { price: number; originalPrice?: number | null; isFree: boolean }) {
+  if (s.isFree) return "FREE";
+  return `£${s.price}`;
+}
 
-export const services: Service[] = [
-  {
-    id: "cv-linkedin-makeover",
-    title: "CV & LinkedIn Makeover",
-    description: "Repositioned for UK recruiters — so you get callbacks, not silence.",
-    price: "£67",
-  },
-  {
-    id: "interview-prep-intensive",
-    title: "Interview Prep Intensive",
-    description: "Practise with someone who passed them — walk in prepared, not hopeful.",
-    price: "£97",
-  },
-  {
-    id: "survival-jobs-guide",
-    title: "10 Mistakes Keeping You Stuck in Survival Jobs",
-    description: "Fix these before you send another CV — instant download.",
-    price: "FREE",
-    free: true,
-  },
-  {
-    id: "income-clarity-course",
-    title: "Income Clarity Course",
-    description: "Position your expertise so the market sees your value — and pays for it.",
-    price: "£97",
-  },
-  {
-    id: "strategy-session",
-    title: "1:1 Strategy Session",
-    description: "60 minutes on the decision that matters — leave with a written plan.",
-    price: "£50",
-  },
-  {
-    id: "business-structure-audit",
-    title: "Business Structure & Systems Audit",
-    description: "An assurance-grade review that makes your business scalable and fundable.",
-    price: "£347",
-  },
-];
+export function mapService(row: any): Service {
+  return {
+    id: row.id,
+    slug: row.slug,
+    title: row.title,
+    description: row.description,
+    price: Number(row.price ?? 0),
+    originalPrice: row.original_price != null ? Number(row.original_price) : null,
+    isFree: !!row.is_free,
+  };
+}
+
+export async function fetchServices(): Promise<Service[]> {
+  const { data, error } = await supabase
+    .from("services")
+    .select("*")
+    .order("created_at", { ascending: true });
+  if (error) throw error;
+  return (data ?? []).map(mapService);
+}
+
+export function useServices() {
+  return useQuery({ queryKey: ["services"], queryFn: fetchServices });
+}
