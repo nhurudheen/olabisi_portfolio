@@ -8,7 +8,7 @@ export default function AboutPage() {
     <SiteLayout>
       <section className="mx-auto max-w-6xl px-5 sm:px-8 py-20 grid md:grid-cols-12 gap-12 items-start">
         <Reveal direction="right" className="md:col-span-5">
-          <div className="relative aspect-[4/5] max-w-sm">
+          <div className="relative aspect-4/5 max-w-sm">
             <div className="absolute -inset-2 border border-gold/40" />
             <img
               src={portrait}
