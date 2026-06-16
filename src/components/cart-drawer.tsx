@@ -4,7 +4,7 @@ import { useCart } from "@/lib/cart";
 import { useEffect } from "react";
 
 export function CartDrawer() {
-  const { open, setOpen, detailed, subtotal, setQty, remove } = useCart();
+  const { open, setOpen, items, subtotal, setQty, remove } = useCart();
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -30,7 +30,7 @@ export function CartDrawer() {
           <div>
             <p className="eyebrow">Your Cart</p>
             <h2 className="font-display text-xl mt-1">
-              {detailed.length} {detailed.length === 1 ? "item" : "items"}
+              {items.length} {items.length === 1 ? "item" : "items"}
             </h2>
           </div>
           <button
@@ -43,7 +43,7 @@ export function CartDrawer() {
         </div>
 
         <div className="flex-1 overflow-y-auto px-6 py-6">
-          {detailed.length === 0 ? (
+          {items.length === 0 ? (
             <div className="text-center py-16">
               <p className="text-muted-foreground text-sm">Your cart is empty.</p>
               <Link
@@ -56,23 +56,22 @@ export function CartDrawer() {
             </div>
           ) : (
             <ul className="space-y-5">
-              {detailed.map((item) => (
+              {items.map((item) => (
                 <li key={item.id} className="flex gap-4">
                   <img
-                    src={item.ebook.cover}
-                    alt={item.ebook.title}
+                    src={item.cover}
+                    alt={item.title}
                     className="w-16 h-20 object-cover rounded-sm border border-border"
                     loading="lazy"
                   />
                   <div className="flex-1 min-w-0">
-                    <p className="font-display text-sm leading-tight">{item.ebook.title}</p>
-                    <p className="text-xs text-muted-foreground mt-1">${item.ebook.price.toFixed(2)}</p>
+                    <p className="font-display text-sm leading-tight">{item.title}</p>
+                    <p className="text-xs text-muted-foreground mt-1">£{item.price.toFixed(2)}</p>
                     <div className="mt-3 flex items-center gap-3">
                       <div className="flex items-center border border-border rounded-sm">
                         <button
                           className="h-7 w-7 inline-flex items-center justify-center hover:text-gold"
                           onClick={() => setQty(item.id, item.qty - 1)}
-                          aria-label="Decrease"
                         >
                           <Minus className="h-3 w-3" />
                         </button>
@@ -80,7 +79,6 @@ export function CartDrawer() {
                         <button
                           className="h-7 w-7 inline-flex items-center justify-center hover:text-gold"
                           onClick={() => setQty(item.id, item.qty + 1)}
-                          aria-label="Increase"
                         >
                           <Plus className="h-3 w-3" />
                         </button>
@@ -93,18 +91,18 @@ export function CartDrawer() {
                       </button>
                     </div>
                   </div>
-                  <p className="font-display text-sm">${(item.qty * item.ebook.price).toFixed(2)}</p>
+                  <p className="font-display text-sm">£{(item.qty * item.price).toFixed(2)}</p>
                 </li>
               ))}
             </ul>
           )}
         </div>
 
-        {detailed.length > 0 && (
+        {items.length > 0 && (
           <div className="border-t border-border px-6 py-5 space-y-4 bg-background/60">
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Subtotal</span>
-              <span className="font-display text-lg">${subtotal.toFixed(2)}</span>
+              <span className="font-display text-lg">£{subtotal.toFixed(2)}</span>
             </div>
             <Link
               to="/checkout"
@@ -114,7 +112,7 @@ export function CartDrawer() {
               Checkout
             </Link>
             <p className="text-[10px] text-muted-foreground text-center tracking-wider uppercase">
-              Secure checkout · Digital delivery
+              Secure checkout · Paystack · Digital delivery
             </p>
           </div>
         )}
