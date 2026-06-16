@@ -148,12 +148,22 @@ export default function CheckoutPage() {
   );
 }
 
-function Input({ label, value, onChange, ...props }: { label: string; value?: string; onChange?: (v: string) => void } & React.InputHTMLAttributes<HTMLInputElement>) {
+type InputProps = {
+  label: string;
+  value?: string;
+  onChange?: (v: string) => void;
+  type?: string;
+  required?: boolean;
+  placeholder?: string;
+};
+function Input({ label, value, onChange, type = "text", required, placeholder }: InputProps) {
   return (
     <div>
       <label className="eyebrow block mb-2">{label}</label>
       <input
-        {...props}
+        type={type}
+        required={required}
+        placeholder={placeholder}
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
         className="w-full bg-background border border-border focus:border-gold outline-none px-4 py-3 text-sm"
