@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { ArrowRight, X, Loader2 } from "lucide-react";
 import type { Service } from "@/lib/services";
 import { formatPrice } from "@/lib/services";
@@ -6,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { payWithPaystack, verifyPayment, newRef } from "@/lib/paystack";
 import { toast } from "sonner";
 import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 
 export function ServiceCard({ service }: { service: Service }) {
   const [open, setOpen] = useState(false);
@@ -34,15 +36,50 @@ export function ServiceCard({ service }: { service: Service }) {
   );
 }
 
+// Generates time slots between startHour and endHour (24h) in stepMinutes
+// increments, hiding any slot that's already passed if `date` is today.
+function getTimeSlots(date: Date | undefined, startHour = 9, endHour = 18, stepMinutes = 30) {
+  if (!date) return [];
+
+  const slots: { value: string; label: string }[] = [];
+  const now = new Date();
+  const isToday = date.toDateString() === now.toDateString();
+
+  for (let minutes = startHour * 60; minutes < endHour * 60; minutes += stepMinutes) {
+    const hour = Math.floor(minutes / 60);
+    const minute = minutes % 60;
+
+    if (isToday && (hour < now.getHours() || (hour === now.getHours() && minute <= now.getMinutes()))) {
+      continue;
+    }
+
+    const value = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+    const label = new Date(0, 0, 0, hour, minute).toLocaleTimeString([], {
+      hour: "numeric",
+      minute: "2-digit",
+    });
+    slots.push({ value, label });
+  }
+  return slots;
+}
+
 function ServiceBookingModal({ service, onClose }: { service: Service; onClose: () => void }) {
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", phone: "" });
   const [date, setDate] = useState<Date | undefined>();
-  const [time, setTime] = useState("10:00");
+  const [time, setTime] = useState("");
   const [busy, setBusy] = useState(false);
+
+  const timeSlots = useMemo(() => getTimeSlots(date), [date]);
+
+  const handleDateSelect = (d: Date | undefined) => {
+    setDate(d);
+    setTime("");
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!date) return toast.error("Please pick a date");
+    if (!time) return toast.error("Please pick a time");
     setBusy(true);
 
     try {
@@ -98,14 +135,13 @@ function ServiceBookingModal({ service, onClose }: { service: Service; onClose: 
     }
   };
 
-  return (
+  return createPortal(
     <>
       <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm" onClick={onClose} />
       <aside
-        className="fixed z-50 bg-card border-gold/30 flex flex-col
+        className="fixed z-50 bg-card border-gold/30 flex flex-col animate-rise
           inset-x-0 bottom-0 max-h-[92vh] border-t rounded-t-2xl
-          sm:top-0 sm:right-0 sm:bottom-0 sm:inset-x-auto sm:max-h-none sm:h-full sm:w-full sm:max-w-md sm:border-t-0 sm:border-l sm:rounded-none"
-        style={{ animation: "rise 0.3s ease both" }}
+          sm:top-0 sm:right-0 sm:bottom-0 sm:inset-x-auto sm:max-h-none sm:h-full sm:w-full sm:max-w-md sm:border-t-0 sm:border-l sm:rounded-none sm:animate-slide-in-right"
       >
         <div className="flex items-start justify-between p-6 border-b border-border">
           <div>
@@ -127,27 +163,43 @@ function ServiceBookingModal({ service, onClose }: { service: Service; onClose: 
           </div>
           <Field label="Email" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} required />
           <Field label="Phone" type="tel" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} required />
-          <div>
+          <div className= "w-full"> 
             <label className="eyebrow block mb-2">Pick a date</label>
             <div className="border border-border bg-background inline-block">
               <Calendar
                 mode="single"
                 selected={date}
-                onSelect={setDate}
+                onSelect={handleDateSelect}
                 disabled={(d) => d < new Date(new Date().toDateString())}
                 className="pointer-events-auto"
               />
             </div>
           </div>
           <div>
-            <label className="eyebrow block mb-2">Time</label>
-            <input
-              type="time"
-              required
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-              className="w-full bg-background border border-border focus:border-gold outline-none px-4 py-3 text-sm"
-            />
+            <label className="eyebrow block mb-2">Pick a time</label>
+            {!date ? (
+              <p className="text-sm text-muted-foreground">Select a date first</p>
+            ) : timeSlots.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No times left today — pick another date</p>
+            ) : (
+              <div className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-1">
+                {timeSlots.map((slot) => (
+                  <button
+                    key={slot.value}
+                    type="button"
+                    onClick={() => setTime(slot.value)}
+                    className={cn(
+                      "text-xs py-2.5 border transition-colors",
+                      time === slot.value
+                        ? "bg-gold text-primary-foreground border-gold"
+                        : "border-border hover:border-gold/60 text-foreground/80"
+                    )}
+                  >
+                    {slot.label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
           <button
             type="submit"
@@ -159,7 +211,8 @@ function ServiceBookingModal({ service, onClose }: { service: Service; onClose: 
           </button>
         </form>
       </aside>
-    </>
+    </>,
+    document.body
   );
 }
 

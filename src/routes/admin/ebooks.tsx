@@ -53,6 +53,7 @@ export default function AdminEbooks() {
   };
 
   const cols: Column<EbookRow>[] = [
+     { key: "sn", header: "S/N", render: (row) =>ebooks.findIndex((item) => item.id === row.id) + 1, },
     { key: "title", header: "Title", render: (r) => (
       <div className="flex items-center gap-3">
         <img src={r.cover_url || DEFAULT_COVER} onError={(e) => ((e.currentTarget as HTMLImageElement).src = DEFAULT_COVER)} alt="" className="w-9 h-12 object-cover border border-border" />

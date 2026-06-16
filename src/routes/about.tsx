@@ -25,18 +25,16 @@ export default function AboutPage() {
           </h1>
           <div className="prose-invert mt-8 space-y-5 text-foreground/80 leading-relaxed">
             <p>
-              I'm Olabisi Olaigbe — a Chartered Accountant (ACA) who spent a decade inside
-              boardrooms watching brilliant people stall on the wrong problems.
+             I’m Olabisi Olaigbe - a Chartered Accountant (ACA) with a decade of cross‑functional experience spanning finance, assurance, operations, and business strategy.
+
             </p>
+            <p>I help professionals and entrepreneurs grow their income by mastering the three levers that actually create results: <span className="text-gold">clarity</span>, {" "}
+              <span className="text-gold">structure</span> , and {" "}
+              <span className="text-gold">visibility</span>.
+</p>
+           
             <p>
-              I coach professionals and entrepreneurs through the three things that actually
-              move income: <span className="text-gold">clarity</span> on what to build,{" "}
-              <span className="text-gold">structure</span> for how to deliver it, and{" "}
-              <span className="text-gold">visibility</span> so the right people notice.
-            </p>
-            <p>
-              My work blends financial rigor with the messy realities of career and business
-              building. No fluff. No vibes. Just frameworks that hold up in real life.
+        My approach combines analytical discipline with the lived realities of building a career or business from the ground up. Practical. Proven. Built for real life.
             </p>
           </div>
 
@@ -67,7 +65,7 @@ export default function AboutPage() {
       <section className="border-t border-border/60 bg-card/30">
         <div className="mx-auto max-w-6xl px-5 sm:px-8 py-20">
           <Reveal>
-            <p className="eyebrow">Experience</p>
+            <p className="eyebrow">PROJECTS</p>
             <h2 className="font-display text-3xl md:text-4xl mt-3 max-w-2xl">
               Companies <span className="text-gradient-gold">led & managed.</span>
             </h2>

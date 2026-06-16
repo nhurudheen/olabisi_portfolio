@@ -28,11 +28,12 @@ export default function AdminMessages() {
   };
 
   const cols: Column<any>[] = [
-    { key: "created_at", header: "Date", render: (r) => new Date(r.created_at).toLocaleString(), csv: (r) => r.created_at },
+   { key: "sn", header: "S/N", render: (row) =>messages.findIndex((item) => item.id === row.id) + 1, },
     { key: "name", header: "Name" },
     { key: "email", header: "Email" },
     { key: "subject", header: "Subject", render: (r) => r.subject || "—" },
     { key: "read", header: "Status", render: (r) => r.read ? <span className="text-muted-foreground text-xs">Read</span> : <span className="text-gold text-xs font-semibold">New</span> },
+      { key: "created_at", header: "Date", render: (r) => new Date(r.created_at).toLocaleString(), csv: (r) => r.created_at },
   ];
 
   return (

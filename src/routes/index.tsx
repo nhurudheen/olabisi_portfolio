@@ -17,7 +17,7 @@ export default function HomePage() {
     <SiteLayout>
       <section className="relative overflow-hidden">
         <img src={heroTexture} alt="" aria-hidden className="absolute inset-0 w-full h-full object-cover opacity-40" />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/85 to-background" />
+        <div className="absolute inset-0 bg-linear-to-b from-background/60 via-background/85 to-background" />
         <div className="relative mx-auto max-w-6xl px-5 sm:px-8 pt-20 pb-24 md:pt-28 md:pb-32 grid md:grid-cols-12 gap-12 items-center">
           <Reveal direction="up" className="md:col-span-7">
             <p className="eyebrow">Business & Career Coach · ACA</p>
@@ -47,12 +47,12 @@ export default function HomePage() {
             </div>
           </Reveal>
           <Reveal direction="left" delay={150} className="md:col-span-5">
-            <div className="relative aspect-[4/5] max-w-md mx-auto">
+            <div className="relative aspect-4/5 max-w-md mx-auto">
               <div className="absolute -inset-2 border border-gold/40" />
               <div className="absolute inset-0 overflow-hidden">
                 <img src={portrait} alt="Olabisi Olaigbe, Business & Career Coach" className="w-full h-full object-cover" />
               </div>
-              <div className="absolute -bottom-6 -left-6 bg-card border border-gold/30 px-5 py-4 max-w-[220px]">
+              <div className="absolute -bottom-6 -left-6 bg-card border border-gold/30 px-5 py-4 max-w-55">
                 <p className="font-display text-sm leading-tight">"Clarity isn't optional — it's the strategy."</p>
                 <p className="eyebrow mt-2">— Olabisi</p>
               </div>

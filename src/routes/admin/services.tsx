@@ -50,6 +50,7 @@ export default function AdminServices() {
   };
 
   const cols: Column<ServiceRow>[] = [
+    { key: "sn", header: "S/N", render: (row) =>services.findIndex((item) => item.id === row.id) + 1, },
     { key: "title", header: "Title" },
     { key: "price", header: "Price", render: (r) => (r.is_free ? "FREE" : `£${r.price}`), csv: (r) => r.price },
     { key: "original_price", header: "Old price", render: (r) => (r.original_price ? `£${r.original_price}` : "—") },

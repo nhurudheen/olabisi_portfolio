@@ -31,10 +31,11 @@ export default function AdminDashboard() {
   const filtered = useMemo(() => orders.filter((o: any) => o.type === tab), [orders, tab]);
 
   const cols: Column<any>[] = [
-    { key: "created_at", header: "Date", render: (r) => new Date(r.created_at).toLocaleString(), csv: (r) => r.created_at },
-    { key: "customer_email", header: "Customer", render: (r) => `${r.customer_first_name ?? ""} ${r.customer_last_name ?? ""} (${r.customer_email})`, csv: (r) => r.customer_email },
+    { key: "sn", header: "S/N", render: (row) => filtered.findIndex((item) => item.id === row.id) + 1,},
+    { key: "customer_email", header: "Customer", render: (r) => `${r.customer_first_name ?? ""} ${r.customer_last_name ?? ""} `, csv: (r) => r.customer_email },
     { key: "amount", header: "Amount", render: (r) => `£${Number(r.amount).toFixed(2)}`, csv: (r) => r.amount },
     { key: "status", header: "Status", render: (r) => <StatusBadge status={r.status} />, csv: (r) => r.status },
+     { key: "created_at", header: "Date", render: (r) => new Date(r.created_at).toLocaleString(), csv: (r) => r.created_at },
     { key: "paystack_reference", header: "Reference" },
   ];
 
