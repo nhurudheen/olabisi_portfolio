@@ -14,16 +14,259 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      ebooks: {
+        Row: {
+          badge: string | null
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_free: boolean
+          original_price: number | null
+          pages: number | null
+          price: number
+          purchase_count: number
+          slug: string | null
+          subtitle: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          badge?: string | null
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_free?: boolean
+          original_price?: number | null
+          pages?: number | null
+          price?: number
+          purchase_count?: number
+          slug?: string | null
+          subtitle?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          badge?: string | null
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_free?: boolean
+          original_price?: number | null
+          pages?: number | null
+          price?: number
+          purchase_count?: number
+          slug?: string | null
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+          read: boolean
+          subject: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+          read?: boolean
+          subject?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          read?: boolean
+          subject?: string | null
+        }
+        Relationships: []
+      }
+      orders: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          customer_email: string
+          customer_first_name: string | null
+          customer_last_name: string | null
+          customer_phone: string | null
+          id: string
+          items: Json
+          notes: string | null
+          paystack_reference: string | null
+          scheduled_date: string | null
+          scheduled_time: string | null
+          service_id: string | null
+          status: Database["public"]["Enums"]["order_status"]
+          type: Database["public"]["Enums"]["order_type"]
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          customer_email: string
+          customer_first_name?: string | null
+          customer_last_name?: string | null
+          customer_phone?: string | null
+          id?: string
+          items?: Json
+          notes?: string | null
+          paystack_reference?: string | null
+          scheduled_date?: string | null
+          scheduled_time?: string | null
+          service_id?: string | null
+          status?: Database["public"]["Enums"]["order_status"]
+          type: Database["public"]["Enums"]["order_type"]
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          customer_email?: string
+          customer_first_name?: string | null
+          customer_last_name?: string | null
+          customer_phone?: string | null
+          id?: string
+          items?: Json
+          notes?: string | null
+          paystack_reference?: string | null
+          scheduled_date?: string | null
+          scheduled_time?: string | null
+          service_id?: string | null
+          status?: Database["public"]["Enums"]["order_status"]
+          type?: Database["public"]["Enums"]["order_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      services: {
+        Row: {
+          booking_count: number
+          created_at: string
+          description: string | null
+          id: string
+          is_free: boolean
+          original_price: number | null
+          price: number
+          slug: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          booking_count?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_free?: boolean
+          original_price?: number | null
+          price?: number
+          slug?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          booking_count?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_free?: boolean
+          original_price?: number | null
+          price?: number
+          slug?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
+      order_status: "pending" | "paid" | "failed" | "cancelled"
+      order_type: "ebook" | "service"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +393,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+      order_status: ["pending", "paid", "failed", "cancelled"],
+      order_type: ["ebook", "service"],
+    },
   },
 } as const
