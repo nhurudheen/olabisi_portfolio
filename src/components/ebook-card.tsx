@@ -8,7 +8,7 @@ export function EbookCard({ ebook }: { ebook: Ebook }) {
   const [added, setAdded] = useState(false);
 
   const handleAdd = () => {
-    add(ebook.id);
+    add(ebook);
     setAdded(true);
     setTimeout(() => setAdded(false), 1400);
   };
@@ -20,6 +20,7 @@ export function EbookCard({ ebook }: { ebook: Ebook }) {
           src={ebook.cover}
           alt={ebook.title}
           loading="lazy"
+          onError={(e) => ((e.currentTarget as HTMLImageElement).src = "/ebook-1.jpg")}
           className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500"
         />
         {ebook.badge && (
@@ -30,20 +31,20 @@ export function EbookCard({ ebook }: { ebook: Ebook }) {
       </div>
       <div className="p-6 flex flex-col flex-1">
         <p className="text-[10px] tracking-[0.2em] uppercase text-gold-deep font-semibold">
-          Ebook · {ebook.pages} pages
+          Ebook{ebook.pages ? ` · ${ebook.pages} pages` : ""}
         </p>
         <h3 className="font-display text-xl mt-2 leading-tight">{ebook.title}</h3>
-        <p className="text-sm text-muted-foreground mt-1">{ebook.subtitle}</p>
+        {ebook.subtitle && <p className="text-sm text-muted-foreground mt-1">{ebook.subtitle}</p>}
         <p className="text-sm text-foreground/70 mt-3 line-clamp-3 flex-1">{ebook.description}</p>
         <div className="mt-5 pt-4 border-t border-border/60 flex items-center justify-between">
           <div>
             <p className="font-display text-lg">
               {ebook.originalPrice && (
                 <span className="text-muted-foreground text-sm line-through mr-2">
-                  ${ebook.originalPrice}
+                  £{ebook.originalPrice}
                 </span>
               )}
-              <span className="text-gold">${ebook.price}</span>
+              <span className="text-gold">{ebook.isFree ? "FREE" : `£${ebook.price}`}</span>
             </p>
           </div>
           <button

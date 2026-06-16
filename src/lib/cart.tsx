@@ -1,14 +1,19 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { ebooks, type Ebook } from "./ebooks";
+import type { Ebook } from "./ebooks";
 
-type CartItem = { id: string; qty: number };
+export type CartItem = {
+  id: string;
+  title: string;
+  price: number;
+  cover: string;
+  qty: number;
+};
 
 type CartContextValue = {
   items: CartItem[];
-  detailed: (CartItem & { ebook: Ebook })[];
   count: number;
   subtotal: number;
-  add: (id: string) => void;
+  add: (e: Ebook) => void;
   remove: (id: string) => void;
   setQty: (id: string, qty: number) => void;
   clear: () => void;
@@ -17,7 +22,7 @@ type CartContextValue = {
 };
 
 const CartContext = createContext<CartContextValue | null>(null);
-const STORAGE_KEY = "olabisi.cart.v1";
+const STORAGE_KEY = "olabisi.cart.v2";
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
@@ -40,32 +45,23 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [items, hydrated]);
 
   const value = useMemo<CartContextValue>(() => {
-    const detailed = items
-      .map((i) => {
-        const ebook = ebooks.find((b) => b.id === i.id);
-        return ebook ? { ...i, ebook } : null;
-      })
-      .filter((x): x is CartItem & { ebook: Ebook } => Boolean(x));
-    const count = detailed.reduce((s, i) => s + i.qty, 0);
-    const subtotal = detailed.reduce((s, i) => s + i.qty * i.ebook.price, 0);
+    const count = items.reduce((s, i) => s + i.qty, 0);
+    const subtotal = items.reduce((s, i) => s + i.qty * i.price, 0);
     return {
       items,
-      detailed,
       count,
       subtotal,
       open,
       setOpen,
-      add: (id) =>
+      add: (e) =>
         setItems((prev) => {
-          const existing = prev.find((p) => p.id === id);
-          if (existing) return prev.map((p) => (p.id === id ? { ...p, qty: p.qty + 1 } : p));
-          return [...prev, { id, qty: 1 }];
+          const ex = prev.find((p) => p.id === e.id);
+          if (ex) return prev.map((p) => (p.id === e.id ? { ...p, qty: p.qty + 1 } : p));
+          return [...prev, { id: e.id, title: e.title, price: e.price, cover: e.cover, qty: 1 }];
         }),
-      remove: (id) => setItems((prev) => prev.filter((p) => p.id !== id)),
+      remove: (id) => setItems((p) => p.filter((x) => x.id !== id)),
       setQty: (id, qty) =>
-        setItems((prev) =>
-          qty <= 0 ? prev.filter((p) => p.id !== id) : prev.map((p) => (p.id === id ? { ...p, qty } : p)),
-        ),
+        setItems((p) => (qty <= 0 ? p.filter((x) => x.id !== id) : p.map((x) => (x.id === id ? { ...x, qty } : x)))),
       clear: () => setItems([]),
     };
   }, [items, open]);

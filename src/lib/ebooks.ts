@@ -1,53 +1,47 @@
-import ebook1 from "@/assets/ebook-1.jpg";
-import ebook2 from "@/assets/ebook-2.jpg";
-import ebook3 from "@/assets/ebook-3.jpg";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export type Ebook = {
   id: string;
+  slug: string | null;
   title: string;
-  subtitle: string;
-  description: string;
+  subtitle: string | null;
+  description: string | null;
   price: number;
-  originalPrice?: number;
+  originalPrice: number | null;
   cover: string;
-  pages: number;
-  badge?: string;
+  pages: number | null;
+  badge: string | null;
+  isFree: boolean;
 };
 
-export const ebooks: Ebook[] = [
-  {
-    id: "clarity-blueprint",
-    title: "The Clarity Blueprint",
-    subtitle: "Design a career you actually want",
-    description:
-      "A step-by-step workbook for professionals ready to stop drifting. Define your direction, audit your strengths, and build a 90-day plan that compounds.",
-    price: 19,
-    originalPrice: 29,
-    cover: ebook1,
-    pages: 128,
-    badge: "Bestseller",
-  },
-  {
-    id: "income-architect",
-    title: "Income Architect",
-    subtitle: "Structure, price and scale your offer",
-    description:
-      "The frameworks I use with private clients to turn expertise into recurring income — positioning, pricing tiers, and the systems that hold it together.",
-    price: 24,
-    cover: ebook2,
-    pages: 164,
-  },
-  {
-    id: "visibility-edit",
-    title: "The Visibility Edit",
-    subtitle: "Be known for the right things",
-    description:
-      "A practical guide to building strategic visibility without burning out. Personal brand pillars, content rhythms, and the messages that move people.",
-    price: 17,
-    cover: ebook3,
-    pages: 96,
-    badge: "New",
-  },
-];
+const DEFAULT_COVER = "/ebook-1.jpg";
 
-export const getEbook = (id: string) => ebooks.find((b) => b.id === id);
+export function mapEbook(row: any): Ebook {
+  return {
+    id: row.id,
+    slug: row.slug,
+    title: row.title,
+    subtitle: row.subtitle,
+    description: row.description,
+    price: Number(row.price ?? 0),
+    originalPrice: row.original_price != null ? Number(row.original_price) : null,
+    cover: row.cover_url || DEFAULT_COVER,
+    pages: row.pages,
+    badge: row.badge,
+    isFree: !!row.is_free,
+  };
+}
+
+export async function fetchEbooks(): Promise<Ebook[]> {
+  const { data, error } = await supabase
+    .from("ebooks")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []).map(mapEbook);
+}
+
+export function useEbooks() {
+  return useQuery({ queryKey: ["ebooks"], queryFn: fetchEbooks });
+}
