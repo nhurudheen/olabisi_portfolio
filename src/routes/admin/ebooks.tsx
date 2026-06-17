@@ -32,7 +32,7 @@ export default function AdminEbooks() {
   });
 
   const [open, setOpen] = useState(false);
-  const [editing, setEditing] = useState<EbookRow | null>(null);
+  const [editing, setEditing] = useState<any | null>(null);
 
   const total = ebooks.length;
   const totalValue = ebooks.reduce((s, e) => s + Number(e.price), 0);
@@ -89,7 +89,7 @@ export default function AdminEbooks() {
   );
 }
 
-function EbookForm({ editing, onClose, onSaved }: { editing: EbookRow | null; onClose: () => void; onSaved: () => void }) {
+function EbookForm({ editing, onClose, onSaved }: { editing: any | null; onClose: () => void; onSaved: () => void }) {
   const [title, setTitle] = useState(editing?.title ?? "");
   const [subtitle, setSubtitle] = useState(editing?.subtitle ?? "");
   const [desc, setDesc] = useState(editing?.description ?? "");
