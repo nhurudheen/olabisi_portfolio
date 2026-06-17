@@ -1,13 +1,11 @@
-import { useMemo, useState } from "react";
-import { createPortal } from "react-dom";
+import { useState } from "react";
 import { ArrowRight, X, Loader2 } from "lucide-react";
 import type { Service } from "@/lib/services";
 import { formatPrice } from "@/lib/services";
 import { supabase } from "@/integrations/supabase/client";
-import { payWithPaystack, verifyPayment, newRef } from "@/lib/paystack";
+import { startStripeCheckout } from "@/lib/stripe";
 import { toast } from "sonner";
 import { Calendar } from "@/components/ui/calendar";
-import { cn } from "@/lib/utils";
 
 export function ServiceCard({ service }: { service: Service }) {
   const [open, setOpen] = useState(false);
@@ -23,7 +21,10 @@ export function ServiceCard({ service }: { service: Service }) {
             {formatPrice(service)}
           </span>
         </div>
-        <p className="text-sm text-foreground/70 mt-3 flex-1 leading-relaxed">{service.description}</p>
+        <p className="text-[10px] tracking-[0.2em] uppercase text-gold-deep font-semibold mt-2">
+          {service.category}
+        </p>
+        <p className="text-sm text-foreground/70 mt-2 flex-1 leading-relaxed">{service.description}</p>
         <button
           onClick={() => setOpen(true)}
           className="mt-5 inline-flex items-center justify-center gap-2 bg-gold text-primary-foreground font-semibold text-[11px] tracking-[0.18em] uppercase px-5 py-3 hover:bg-gold-deep transition-colors"
@@ -36,54 +37,17 @@ export function ServiceCard({ service }: { service: Service }) {
   );
 }
 
-// Generates time slots between startHour and endHour (24h) in stepMinutes
-// increments, hiding any slot that's already passed if `date` is today.
-function getTimeSlots(date: Date | undefined, startHour = 9, endHour = 18, stepMinutes = 30) {
-  if (!date) return [];
-
-  const slots: { value: string; label: string }[] = [];
-  const now = new Date();
-  const isToday = date.toDateString() === now.toDateString();
-
-  for (let minutes = startHour * 60; minutes < endHour * 60; minutes += stepMinutes) {
-    const hour = Math.floor(minutes / 60);
-    const minute = minutes % 60;
-
-    if (isToday && (hour < now.getHours() || (hour === now.getHours() && minute <= now.getMinutes()))) {
-      continue;
-    }
-
-    const value = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
-    const label = new Date(0, 0, 0, hour, minute).toLocaleTimeString([], {
-      hour: "numeric",
-      minute: "2-digit",
-    });
-    slots.push({ value, label });
-  }
-  return slots;
-}
-
 function ServiceBookingModal({ service, onClose }: { service: Service; onClose: () => void }) {
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", phone: "" });
   const [date, setDate] = useState<Date | undefined>();
-  const [time, setTime] = useState("");
+  const [time, setTime] = useState("10:00");
   const [busy, setBusy] = useState(false);
-
-  const timeSlots = useMemo(() => getTimeSlots(date), [date]);
-
-  const handleDateSelect = (d: Date | undefined) => {
-    setDate(d);
-    setTime("");
-  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!date) return toast.error("Please pick a date");
-    if (!time) return toast.error("Please pick a time");
     setBusy(true);
-
     try {
-      const reference = newRef("svc");
       const { data: order, error } = await supabase
         .from("orders")
         .insert({
@@ -98,7 +62,6 @@ function ServiceBookingModal({ service, onClose }: { service: Service; onClose: 
           amount: service.price,
           currency: "GBP",
           status: service.isFree ? "paid" : "pending",
-          paystack_reference: reference,
           items: [{ id: service.id, title: service.title, price: service.price }],
         })
         .select()
@@ -111,23 +74,11 @@ function ServiceBookingModal({ service, onClose }: { service: Service; onClose: 
         return;
       }
 
-      await payWithPaystack({
+      await startStripeCheckout({
+        items: [{ name: service.title, amount: service.price, quantity: 1 }],
         email: form.email,
-        amountGBP: service.price,
-        reference,
-        metadata: { order_id: order.id, service: service.title },
-        onSuccess: async (ref) => {
-          try {
-            await verifyPayment(ref, order.id);
-            toast.success("Payment received — thank you!");
-            onClose();
-          } catch (err: any) {
-            toast.error(err.message ?? "Verification failed");
-          } finally {
-            setBusy(false);
-          }
-        },
-        onClose: () => setBusy(false),
+        orderId: order.id,
+        metadata: { type: "service", service: service.title },
       });
     } catch (err: any) {
       toast.error(err.message ?? "Something went wrong");
@@ -135,13 +86,14 @@ function ServiceBookingModal({ service, onClose }: { service: Service; onClose: 
     }
   };
 
-  return createPortal(
+  return (
     <>
       <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm" onClick={onClose} />
       <aside
-        className="fixed z-50 bg-card border-gold/30 flex flex-col animate-rise
+        className="fixed z-50 bg-card border-gold/30 flex flex-col
           inset-x-0 bottom-0 max-h-[92vh] border-t rounded-t-2xl
-          sm:top-0 sm:right-0 sm:bottom-0 sm:inset-x-auto sm:max-h-none sm:h-full sm:w-full sm:max-w-md sm:border-t-0 sm:border-l sm:rounded-none sm:animate-slide-in-right"
+          sm:top-0 sm:right-0 sm:bottom-0 sm:inset-x-auto sm:max-h-none sm:h-full sm:w-full sm:max-w-md sm:border-t-0 sm:border-l sm:rounded-none"
+        style={{ animation: "rise 0.3s ease both" }}
       >
         <div className="flex items-start justify-between p-6 border-b border-border">
           <div>
@@ -149,10 +101,7 @@ function ServiceBookingModal({ service, onClose }: { service: Service; onClose: 
             <h3 className="font-display text-lg mt-1 leading-tight">{service.title}</h3>
             <p className="text-xs text-muted-foreground mt-1">{formatPrice(service)}</p>
           </div>
-          <button
-            onClick={onClose}
-            className="h-8 w-8 inline-flex items-center justify-center rounded-full border border-border hover:border-gold hover:text-gold"
-          >
+          <button onClick={onClose} className="h-8 w-8 inline-flex items-center justify-center rounded-full border border-border hover:border-gold hover:text-gold">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -163,56 +112,23 @@ function ServiceBookingModal({ service, onClose }: { service: Service; onClose: 
           </div>
           <Field label="Email" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} required />
           <Field label="Phone" type="tel" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} required />
-          <div className= "w-full"> 
+          <div>
             <label className="eyebrow block mb-2">Pick a date</label>
             <div className="border border-border bg-background inline-block">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={handleDateSelect}
-                disabled={(d) => d < new Date(new Date().toDateString())}
-                className="pointer-events-auto"
-              />
+              <Calendar mode="single" selected={date} onSelect={setDate} disabled={(d) => d < new Date(new Date().toDateString())} className="pointer-events-auto" />
             </div>
           </div>
           <div>
-            <label className="eyebrow block mb-2">Pick a time</label>
-            {!date ? (
-              <p className="text-sm text-muted-foreground">Select a date first</p>
-            ) : timeSlots.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No times left today — pick another date</p>
-            ) : (
-              <div className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-1">
-                {timeSlots.map((slot) => (
-                  <button
-                    key={slot.value}
-                    type="button"
-                    onClick={() => setTime(slot.value)}
-                    className={cn(
-                      "text-xs py-2.5 border transition-colors",
-                      time === slot.value
-                        ? "bg-gold text-primary-foreground border-gold"
-                        : "border-border hover:border-gold/60 text-foreground/80"
-                    )}
-                  >
-                    {slot.label}
-                  </button>
-                ))}
-              </div>
-            )}
+            <label className="eyebrow block mb-2">Time</label>
+            <input type="time" required value={time} onChange={(e) => setTime(e.target.value)} className="w-full bg-background border border-border focus:border-gold outline-none px-4 py-3 text-sm" />
           </div>
-          <button
-            type="submit"
-            disabled={busy}
-            className="w-full bg-gold text-primary-foreground font-semibold text-xs tracking-[0.16em] uppercase py-4 hover:bg-gold-deep transition-colors disabled:opacity-60 inline-flex items-center justify-center gap-2"
-          >
+          <button type="submit" disabled={busy} className="w-full bg-gold text-primary-foreground font-semibold text-xs tracking-[0.16em] uppercase py-4 hover:bg-gold-deep transition-colors disabled:opacity-60 inline-flex items-center justify-center gap-2">
             {busy && <Loader2 className="h-4 w-4 animate-spin" />}
             {service.isFree ? "Confirm booking" : `Pay £${service.price}`}
           </button>
         </form>
       </aside>
-    </>,
-    document.body
+    </>
   );
 }
 
@@ -222,13 +138,7 @@ function Field({
   return (
     <div>
       <label className="eyebrow block mb-2">{label}</label>
-      <input
-        type={type}
-        required={required}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-background border border-border focus:border-gold outline-none px-4 py-3 text-sm"
-      />
+      <input type={type} required={required} value={value} onChange={(e) => onChange(e.target.value)} className="w-full bg-background border border-border focus:border-gold outline-none px-4 py-3 text-sm" />
     </div>
   );
 }

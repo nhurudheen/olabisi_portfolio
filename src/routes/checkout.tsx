@@ -4,7 +4,7 @@ import { useCart } from "@/lib/cart";
 import { useState } from "react";
 import { Lock, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { payWithPaystack, verifyPayment, newRef } from "@/lib/paystack";
+import { startStripeCheckout } from "@/lib/stripe";
 import { toast } from "sonner";
 
 export default function CheckoutPage() {
@@ -18,7 +18,6 @@ export default function CheckoutPage() {
     e.preventDefault();
     setBusy(true);
     try {
-      const reference = newRef("ebk");
       const { data: order, error } = await supabase
         .from("orders")
         .insert({
@@ -31,35 +30,28 @@ export default function CheckoutPage() {
           amount: subtotal,
           currency: "GBP",
           status: "pending",
-          paystack_reference: reference,
         })
         .select()
         .single();
       if (error) throw error;
 
-      await payWithPaystack({
+      // Clear cart locally — payment will be verified on success page
+      clear();
+
+      await startStripeCheckout({
+        items: items.map((i) => ({ name: i.title, amount: i.price, quantity: i.qty })),
         email: form.email,
-        amountGBP: subtotal,
-        reference,
-        metadata: { order_id: order.id },
-        onSuccess: async (ref) => {
-          try {
-            await verifyPayment(ref, order.id);
-            clear();
-            setDone(true);
-          } catch (err: any) {
-            toast.error(err.message ?? "Verification failed");
-          } finally {
-            setBusy(false);
-          }
-        },
-        onClose: () => setBusy(false),
+        orderId: order.id,
+        metadata: { type: "ebook" },
       });
     } catch (err: any) {
       toast.error(err.message ?? "Something went wrong");
       setBusy(false);
     }
   };
+
+  // unused removed
+  void done; void setDone;
 
   if (done) {
     return (
