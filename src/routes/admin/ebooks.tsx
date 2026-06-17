@@ -98,6 +98,7 @@ function EbookForm({ editing, onClose, onSaved }: { editing: EbookRow | null; on
   const [pages, setPages] = useState(editing?.pages?.toString() ?? "");
   const [cover, setCover] = useState(editing?.cover_url ?? "");
   const [isFree, setIsFree] = useState(editing?.is_free ?? false);
+  const [category, setCategory] = useState<"business" | "career">((editing?.category as any) ?? "business");
   const [busy, setBusy] = useState(false);
 
   const save = async (e: React.FormEvent) => {
@@ -112,6 +113,7 @@ function EbookForm({ editing, onClose, onSaved }: { editing: EbookRow | null; on
       pages: pages ? Number(pages) : null,
       cover_url: cover || null,
       is_free: isFree,
+      category,
     };
     const { error } = editing
       ? await supabase.from("ebooks").update(payload).eq("id", editing.id)
@@ -133,6 +135,13 @@ function EbookForm({ editing, onClose, onSaved }: { editing: EbookRow | null; on
           </div>
           <F label="Book name" value={title} onChange={setTitle} required />
           <F label="Subtitle" value={subtitle} onChange={setSubtitle} />
+          <div>
+            <label className="eyebrow block mb-2">Category</label>
+            <select required value={category} onChange={(e) => setCategory(e.target.value as any)} className="w-full bg-background border border-border focus:border-gold outline-none px-4 py-3 text-sm">
+              <option value="business">Business</option>
+              <option value="career">Career</option>
+            </select>
+          </div>
           <div>
             <label className="eyebrow block mb-2">Description</label>
             <textarea required rows={5} value={desc} onChange={(e) => setDesc(e.target.value)} className="w-full bg-background border border-border focus:border-gold outline-none px-4 py-3 text-sm" />
