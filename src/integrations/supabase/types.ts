@@ -17,6 +17,7 @@ export type Database = {
       ebooks: {
         Row: {
           badge: string | null
+          category: Database["public"]["Enums"]["category_type"]
           cover_url: string | null
           created_at: string
           description: string | null
@@ -33,6 +34,7 @@ export type Database = {
         }
         Insert: {
           badge?: string | null
+          category?: Database["public"]["Enums"]["category_type"]
           cover_url?: string | null
           created_at?: string
           description?: string | null
@@ -49,6 +51,7 @@ export type Database = {
         }
         Update: {
           badge?: string | null
+          category?: Database["public"]["Enums"]["category_type"]
           cover_url?: string | null
           created_at?: string
           description?: string | null
@@ -61,6 +64,36 @@ export type Database = {
           slug?: string | null
           subtitle?: string | null
           title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      meeting_prices: {
+        Row: {
+          active: boolean
+          created_at: string
+          duration_minutes: number
+          id: string
+          original_price: number | null
+          price: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          duration_minutes: number
+          id?: string
+          original_price?: number | null
+          price?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          original_price?: number | null
+          price?: number
           updated_at?: string
         }
         Relationships: []
@@ -104,10 +137,12 @@ export type Database = {
           customer_first_name: string | null
           customer_last_name: string | null
           customer_phone: string | null
+          duration_minutes: number | null
           id: string
           items: Json
           notes: string | null
           paystack_reference: string | null
+          purpose: string | null
           scheduled_date: string | null
           scheduled_time: string | null
           service_id: string | null
@@ -123,10 +158,12 @@ export type Database = {
           customer_first_name?: string | null
           customer_last_name?: string | null
           customer_phone?: string | null
+          duration_minutes?: number | null
           id?: string
           items?: Json
           notes?: string | null
           paystack_reference?: string | null
+          purpose?: string | null
           scheduled_date?: string | null
           scheduled_time?: string | null
           service_id?: string | null
@@ -142,10 +179,12 @@ export type Database = {
           customer_first_name?: string | null
           customer_last_name?: string | null
           customer_phone?: string | null
+          duration_minutes?: number | null
           id?: string
           items?: Json
           notes?: string | null
           paystack_reference?: string | null
+          purpose?: string | null
           scheduled_date?: string | null
           scheduled_time?: string | null
           service_id?: string | null
@@ -193,6 +232,7 @@ export type Database = {
       services: {
         Row: {
           booking_count: number
+          category: Database["public"]["Enums"]["category_type"]
           created_at: string
           description: string | null
           id: string
@@ -205,6 +245,7 @@ export type Database = {
         }
         Insert: {
           booking_count?: number
+          category?: Database["public"]["Enums"]["category_type"]
           created_at?: string
           description?: string | null
           id?: string
@@ -217,6 +258,7 @@ export type Database = {
         }
         Update: {
           booking_count?: number
+          category?: Database["public"]["Enums"]["category_type"]
           created_at?: string
           description?: string | null
           id?: string
@@ -265,8 +307,9 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      category_type: "business" | "career"
       order_status: "pending" | "paid" | "failed" | "cancelled"
-      order_type: "ebook" | "service"
+      order_type: "ebook" | "service" | "meeting"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -395,8 +438,9 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      category_type: ["business", "career"],
       order_status: ["pending", "paid", "failed", "cancelled"],
-      order_type: ["ebook", "service"],
+      order_type: ["ebook", "service", "meeting"],
     },
   },
 } as const
