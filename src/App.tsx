@@ -14,9 +14,12 @@ import AdminProtected from "./components/admin/protected-route";
 import AdminDashboard from "./routes/admin/dashboard";
 import AdminOrders from "./routes/admin/orders";
 import AdminServices from "./routes/admin/services";
+import AdminMeetings from "./routes/admin/meetings";
 import AdminEbooks from "./routes/admin/ebooks";
 import AdminMessages from "./routes/admin/messages";
 import AdminProfile from "./routes/admin/profile";
+import PaymentSuccess from "./routes/payment-success";
+import PaymentCancel from "./routes/payment-cancel";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
