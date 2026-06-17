@@ -101,7 +101,7 @@ export default function CheckoutPage() {
                 <Input label="Phone" type="tel" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} />
               </div>
             </div>
-            <p className="text-[11px] text-muted-foreground mt-4 tracking-wider">Card payment is handled securely via Paystack.</p>
+            <p className="text-[11px] text-muted-foreground mt-4 tracking-wider">Card payment is handled securely via Stripe.</p>
           </div>
 
           <button type="submit" disabled={busy} className="w-full bg-gold text-primary-foreground font-semibold text-xs tracking-[0.16em] uppercase py-4 hover:bg-gold-deep transition-colors disabled:opacity-60 inline-flex items-center justify-center gap-2">

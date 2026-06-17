@@ -2,6 +2,7 @@ import { SiteLayout } from "@/components/site-layout";
 import { Reveal } from "@/components/reveal";
 import portrait from "@/assets/olabisi-portrait.jpg";
 import { Briefcase, ExternalLink } from "lucide-react";
+import gidiraLogo from "@/assets/gidira.png";
 
 export default function AboutPage() {
   return (
@@ -25,16 +26,16 @@ export default function AboutPage() {
           </h1>
           <div className="prose-invert mt-8 space-y-5 text-foreground/80 leading-relaxed">
             <p>
-             I’m Olabisi Olaigbe - a Chartered Accountant (ACA) with a decade of cross‑functional experience spanning finance, assurance, operations, and business strategy.
+              I’m Olabisi Olaigbe - a Chartered Accountant (ACA) with a decade of cross‑functional experience spanning finance, assurance, operations, and business strategy.
 
             </p>
             <p>I help professionals and entrepreneurs grow their income by mastering the three levers that actually create results: <span className="text-gold">clarity</span>, {" "}
               <span className="text-gold">structure</span> , and {" "}
               <span className="text-gold">visibility</span>.
-</p>
-           
+            </p>
+
             <p>
-        My approach combines analytical discipline with the lived realities of building a career or business from the ground up. Practical. Proven. Built for real life.
+              My approach combines analytical discipline with the lived realities of building a career or business from the ground up. Practical. Proven. Built for real life.
             </p>
           </div>
 
@@ -83,12 +84,12 @@ export default function AboutPage() {
                 className="group block bg-card border border-border/60 hover:border-gold/60 transition-colors p-7 h-full"
               >
                 <div className="flex items-start justify-between gap-4">
-                  <div className="h-11 w-11 rounded-full border border-gold/40 inline-flex items-center justify-center text-gold group-hover:bg-gold group-hover:text-primary-foreground transition-colors">
-                    <Briefcase className="h-5 w-5" />
+                  <div className="h-20 w-50 ">
+                    <img src={gidiraLogo} alt="Gidira Logo" className="" />
                   </div>
                   <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-gold transition-colors" />
                 </div>
-                <p className="eyebrow mt-5">Founder & Managing Lead</p>
+                <p className="eyebrow ">Founder & Managing Lead</p>
                 <h3 className="font-display text-2xl mt-2 leading-tight">
                   Gidira — Trusted Vendors Community
                 </h3>

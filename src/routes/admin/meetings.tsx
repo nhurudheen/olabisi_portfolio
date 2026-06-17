@@ -43,13 +43,14 @@ export default function AdminMeetings() {
   };
 
   const cols: Column<any>[] = [
-    { key: "created_at", header: "Booked at", render: (r) => new Date(r.created_at).toLocaleString(), csv: (r) => r.created_at },
-    { key: "customer_email", header: "Customer", render: (r) => `${r.customer_first_name ?? ""} ${r.customer_last_name ?? ""} <${r.customer_email}>` },
+    { key: "S/N", header: "S/N", render: (row) => meetings.findIndex((m) => m.id === row.id) + 1 },
+    { key: "customer_email", header: "Customer", render: (r) => `${r.customer_first_name ?? ""} ${r.customer_last_name ?? ""}` },
     { key: "duration_minutes", header: "Duration", render: (r) => `${r.duration_minutes ?? "—"} min` },
     { key: "scheduled_date", header: "Date", render: (r) => r.scheduled_date ?? "—" },
     { key: "scheduled_time", header: "Time", render: (r) => r.scheduled_time ?? "—" },
     { key: "amount", header: "Amount", render: (r) => `£${Number(r.amount).toFixed(2)}`, csv: (r) => r.amount },
     { key: "status", header: "Status", render: (r) => <StatusBadge status={r.status} /> },
+    { key: "created_at", header: "Booked at", render: (r) => new Date(r.created_at).toLocaleString(), csv: (r) => r.created_at },
   ];
 
   return (

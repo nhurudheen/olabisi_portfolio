@@ -60,9 +60,9 @@ export default function ShopPage() {
             {([
               { v: "all", l: "All" },
               { v: "free", l: "Free" },
-              { v: "under20", l: "Under £20" },
-              { v: "20to50", l: "£20 – £50" },
-              { v: "over50", l: "Over £50" },
+              // { v: "under20", l: "Under £20" },
+              // { v: "20to50", l: "£20 – £50" },
+              // { v: "over50", l: "Over £50" },
             ] as { v: Filter; l: string }[]).map((b) => (
               <button
                 key={b.v}

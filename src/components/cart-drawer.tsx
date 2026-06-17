@@ -13,7 +13,7 @@ export function CartDrawer() {
     };
   }, [open]);
 
-  
+
   return (
     <>
       <div
@@ -113,7 +113,7 @@ export function CartDrawer() {
               Checkout
             </Link>
             <p className="text-[10px] text-muted-foreground text-center tracking-wider uppercase">
-              Secure checkout · Paystack · Digital delivery
+              Secure checkout · Stripe Payment · Digital delivery
             </p>
           </div>
         )}

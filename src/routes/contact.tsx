@@ -1,6 +1,6 @@
 import { SiteLayout } from "@/components/site-layout";
 import { Reveal } from "@/components/reveal";
-import { Mail, MessageCircle, Linkedin, Check } from "lucide-react";
+import { Mail, MessageCircle, Linkedin, Check, Instagram, Facebook } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
@@ -12,7 +12,7 @@ const schema = z.object({
   message: z.string().trim().min(1).max(2000),
 });
 
-const CONTACT_EMAIL = "hello@olabisi.co";
+const CONTACT_EMAIL = "olabisiolaigbe@gidira.com";
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
@@ -58,8 +58,21 @@ export default function ContactPage() {
           </p>
           <ul className="mt-10 space-y-4 text-sm">
             <li className="flex items-center gap-3"><Mail className="h-4 w-4 text-gold" /><a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-gold">{CONTACT_EMAIL}</a></li>
-            <li className="flex items-center gap-3"><MessageCircle className="h-4 w-4 text-gold" /><span>WhatsApp</span></li>
-            <li className="flex items-center gap-3"><Linkedin className="h-4 w-4 text-gold" /><span>LinkedIn</span></li>
+            <li className="flex items-center gap-3"><Instagram className="h-4 w-4 text-gold" />
+            <a href="https://www.instagram.com/olabisiolaigbe?igsh=MXNhMmxxcGRqbzQ3Yw%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" className="hover:text-gold">
+              <span>Olabisi Olaigbe</span>
+            </a>
+            </li>
+                <li className="flex items-center gap-3"><Facebook className="h-4 w-4 text-gold" />
+            <a href="https://web.facebook.com/people/Olabisi-Olaigbe/61584993629911/?mibextid=wwXIfr&rdid=7smVxWuhuwdggztb&share_url=https%3A%2F%2Fweb.facebook.com%2Fshare%2F1CayqHuv2W%2F%3Fmibextid%3DwwXIfr%26ref%3D1%26_rdc%3D1%26_rdr" target="_blank" rel="noopener noreferrer" className="hover:text-gold">
+              <span>Olabisi Olaigbe</span>
+            </a>
+            </li>
+            <li className="flex items-center gap-3"><Linkedin className="h-4 w-4 text-gold" />
+           <a href="https://www.linkedin.com/in/olabisi-olaigbe?utm_source=share_via&utm_content=profile&utm_medium=member_ios" target="_blank" rel="noopener noreferrer" className="hover:text-gold">
+              <span>Olabisi Olaigbe</span>
+            </a>
+            </li>
           </ul>
         </Reveal>
 

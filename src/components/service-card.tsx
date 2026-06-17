@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { ArrowRight, X, Loader2 } from "lucide-react";
 import type { Service } from "@/lib/services";
 import { formatPrice } from "@/lib/services";
@@ -86,14 +87,13 @@ function ServiceBookingModal({ service, onClose }: { service: Service; onClose: 
     }
   };
 
-  return (
+  return createPortal(
     <>
       <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm" onClick={onClose} />
       <aside
-        className="fixed z-50 bg-card border-gold/30 flex flex-col
+        className="fixed z-50 bg-card border-gold/30 flex flex-col animate-rise
           inset-x-0 bottom-0 max-h-[92vh] border-t rounded-t-2xl
-          sm:top-0 sm:right-0 sm:bottom-0 sm:inset-x-auto sm:max-h-none sm:h-full sm:w-full sm:max-w-md sm:border-t-0 sm:border-l sm:rounded-none"
-        style={{ animation: "rise 0.3s ease both" }}
+          sm:top-0 sm:right-0 sm:bottom-0 sm:inset-x-auto sm:max-h-none sm:h-full sm:w-full sm:max-w-md sm:border-t-0 sm:border-l sm:rounded-none sm:animate-slide-in-right"
       >
         <div className="flex items-start justify-between p-6 border-b border-border">
           <div>
@@ -128,7 +128,8 @@ function ServiceBookingModal({ service, onClose }: { service: Service; onClose: 
           </button>
         </form>
       </aside>
-    </>
+    </>,
+    document.body
   );
 }
 
