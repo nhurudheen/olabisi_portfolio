@@ -55,6 +55,8 @@ export default function App() {
           <Route path="/shop" element={<ShopPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
+          <Route path="/payment-cancel" element={<PaymentCancel />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route
             path="/admin"
@@ -67,6 +69,7 @@ export default function App() {
             <Route index element={<AdminDashboard />} />
             <Route path="orders" element={<AdminOrders />} />
             <Route path="services" element={<AdminServices />} />
+            <Route path="meetings" element={<AdminMeetings />} />
             <Route path="ebooks" element={<AdminEbooks />} />
             <Route path="messages" element={<AdminMessages />} />
             <Route path="profile" element={<AdminProfile />} />
