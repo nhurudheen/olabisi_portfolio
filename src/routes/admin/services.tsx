@@ -85,12 +85,13 @@ export default function AdminServices() {
   );
 }
 
-function ServiceForm({ editing, onClose, onSaved }: { editing: ServiceRow | null; onClose: () => void; onSaved: () => void }) {
+function ServiceForm({ editing, onClose, onSaved }: { editing: any | null; onClose: () => void; onSaved: () => void }) {
   const [title, setTitle] = useState(editing?.title ?? "");
   const [desc, setDesc] = useState(editing?.description ?? "");
   const [price, setPrice] = useState(editing?.price?.toString() ?? "0");
   const [oldPrice, setOldPrice] = useState(editing?.original_price?.toString() ?? "");
   const [isFree, setIsFree] = useState(editing?.is_free ?? false);
+  const [category, setCategory] = useState<"business" | "career">((editing?.category as any) ?? "business");
   const [busy, setBusy] = useState(false);
 
   const save = async (e: React.FormEvent) => {
@@ -102,6 +103,7 @@ function ServiceForm({ editing, onClose, onSaved }: { editing: ServiceRow | null
       price: isFree ? 0 : Number(price),
       original_price: oldPrice ? Number(oldPrice) : null,
       is_free: isFree,
+      category,
     };
     const { error } = editing
       ? await supabase.from("services").update(payload).eq("id", editing.id)
@@ -122,6 +124,13 @@ function ServiceForm({ editing, onClose, onSaved }: { editing: ServiceRow | null
             <button type="button" onClick={onClose} className="h-8 w-8 inline-flex items-center justify-center rounded-full border border-border"><X className="h-4 w-4" /></button>
           </div>
           <F label="Service name" value={title} onChange={setTitle} required />
+          <div>
+            <label className="eyebrow block mb-2">Category</label>
+            <select required value={category} onChange={(e) => setCategory(e.target.value as any)} className="w-full bg-background border border-border focus:border-gold outline-none px-4 py-3 text-sm">
+              <option value="business">Business</option>
+              <option value="career">Career</option>
+            </select>
+          </div>
           <div>
             <label className="eyebrow block mb-2">Description</label>
             <textarea required rows={4} value={desc} onChange={(e) => setDesc(e.target.value)} className="w-full bg-background border border-border focus:border-gold outline-none px-4 py-3 text-sm" />
