@@ -3,6 +3,8 @@ import { SiteLayout } from "@/components/site-layout";
 import { EbookCard } from "@/components/ebook-card";
 import { Reveal } from "@/components/reveal";
 import { useEbooks } from "@/lib/ebooks";
+import type { Category } from "@/lib/services";
+import { CategoryTabs } from "./index";
 import { Search } from "lucide-react";
 
 type Filter = "all" | "free" | "under20" | "20to50" | "over50";
@@ -11,9 +13,11 @@ export default function ShopPage() {
   const { data: ebooks = [], isLoading } = useEbooks();
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
+  const [tab, setTab] = useState<Category>("business");
 
   const filtered = useMemo(() => {
     return ebooks.filter((e) => {
+      if (e.category !== tab) return false;
       if (q && !(`${e.title} ${e.subtitle ?? ""} ${e.description ?? ""}`.toLowerCase().includes(q.toLowerCase())))
         return false;
       if (filter === "free") return e.isFree || e.price === 0;
@@ -22,7 +26,7 @@ export default function ShopPage() {
       if (filter === "over50") return !e.isFree && e.price > 50;
       return true;
     });
-  }, [ebooks, q, filter]);
+  }, [ebooks, q, filter, tab]);
 
   return (
     <SiteLayout>
@@ -52,7 +56,7 @@ export default function ShopPage() {
               className="w-full bg-background border border-border focus:border-gold outline-none pl-10 pr-4 py-3 text-sm"
             />
           </div>
-          <div className="flex flex-wrap gap-2 text-xs">
+          <div className="flex flex-wrap gap-2 text-xs items-center">
             {([
               { v: "all", l: "All" },
               { v: "free", l: "Free" },
@@ -70,6 +74,7 @@ export default function ShopPage() {
                 {b.l}
               </button>
             ))}
+            <CategoryTabs value={tab} onChange={setTab} />
           </div>
         </div>
       </section>
