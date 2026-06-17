@@ -25,7 +25,7 @@ export function SiteFooter() {
           <ul className="space-y-2 text-foreground/75">
             <li><a href="https://gidira.com/" target="_blank" rel="noopener noreferrer" className="hover:text-gold">Gidira</a></li>
             <li><a href="https://www.linkedin.com/in/olabisi-olaigbe?utm_source=share_via&utm_content=profile&utm_medium=member_ios" target="_blank" rel="noopener noreferrer" className="hover:text-gold">LinkedIn</a></li>
-            <li><a href="mailto:olabisiolaigbe@gidira.com" className="hover:text-gold">olabisiolaigbe@gidira.com</a></li>
+            <li><a href="mailto:olabisi.olaigbe@gidira.com" className="hover:text-gold">olabisi.olaigbe@gidira.com</a></li>
           </ul>
         </div>
       </div>
