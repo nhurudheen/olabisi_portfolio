@@ -31,7 +31,7 @@ export function EbookCard({ ebook }: { ebook: Ebook }) {
       </div>
       <div className="p-6 flex flex-col flex-1">
         <p className="text-[10px] tracking-[0.2em] uppercase text-gold-deep font-semibold">
-          Ebook{ebook.pages ? ` · ${ebook.pages} pages` : ""}
+          {ebook.category} · Ebook{ebook.pages ? ` · ${ebook.pages} pages` : ""}
         </p>
         <h3 className="font-display text-xl mt-2 leading-tight">{ebook.title}</h3>
         {ebook.subtitle && <p className="text-sm text-muted-foreground mt-1">{ebook.subtitle}</p>}

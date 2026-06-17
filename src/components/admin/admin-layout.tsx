@@ -1,12 +1,13 @@
 import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { LayoutDashboard, ShoppingCart, Briefcase, BookOpen, MessageSquare, User, LogOut, Menu, X } from "lucide-react";
+import { LayoutDashboard, ShoppingCart, Briefcase, BookOpen, MessageSquare, User, LogOut, Menu, X, Video } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 
 const navItems = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
   { to: "/admin/orders", label: "Orders", icon: ShoppingCart },
   { to: "/admin/services", label: "Services", icon: Briefcase },
+  { to: "/admin/meetings", label: "Meeting Session", icon: Video },
   { to: "/admin/ebooks", label: "Ebooks", icon: BookOpen },
   { to: "/admin/messages", label: "Messages", icon: MessageSquare },
   { to: "/admin/profile", label: "Profile", icon: User },

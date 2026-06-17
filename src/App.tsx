@@ -14,9 +14,12 @@ import AdminProtected from "./components/admin/protected-route";
 import AdminDashboard from "./routes/admin/dashboard";
 import AdminOrders from "./routes/admin/orders";
 import AdminServices from "./routes/admin/services";
+import AdminMeetings from "./routes/admin/meetings";
 import AdminEbooks from "./routes/admin/ebooks";
 import AdminMessages from "./routes/admin/messages";
 import AdminProfile from "./routes/admin/profile";
+import PaymentSuccess from "./routes/payment-success";
+import PaymentCancel from "./routes/payment-cancel";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -52,6 +55,8 @@ export default function App() {
           <Route path="/shop" element={<ShopPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
+          <Route path="/payment-cancel" element={<PaymentCancel />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route
             path="/admin"
@@ -64,6 +69,7 @@ export default function App() {
             <Route index element={<AdminDashboard />} />
             <Route path="orders" element={<AdminOrders />} />
             <Route path="services" element={<AdminServices />} />
+            <Route path="meetings" element={<AdminMeetings />} />
             <Route path="ebooks" element={<AdminEbooks />} />
             <Route path="messages" element={<AdminMessages />} />
             <Route path="profile" element={<AdminProfile />} />

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { Category } from "./services";
 
 export type Ebook = {
   id: string;
@@ -13,6 +14,7 @@ export type Ebook = {
   pages: number | null;
   badge: string | null;
   isFree: boolean;
+  category: Category;
 };
 
 const DEFAULT_COVER = "/ebook-1.jpg";
@@ -30,14 +32,12 @@ export function mapEbook(row: any): Ebook {
     pages: row.pages,
     badge: row.badge,
     isFree: !!row.is_free,
+    category: (row.category ?? "business") as Category,
   };
 }
 
 export async function fetchEbooks(): Promise<Ebook[]> {
-  const { data, error } = await supabase
-    .from("ebooks")
-    .select("*")
-    .order("created_at", { ascending: false });
+  const { data, error } = await supabase.from("ebooks").select("*").order("created_at", { ascending: false });
   if (error) throw error;
   return (data ?? []).map(mapEbook);
 }
