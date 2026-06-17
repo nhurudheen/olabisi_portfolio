@@ -36,10 +36,12 @@ export function BookCallModal({ onClose }: { onClose: () => void }) {
     if (!selected) return toast.error("Please pick a duration");
     setBusy(true);
     try {
+      const orderId = crypto.randomUUID(); 
       const [firstName, ...rest] = form.name.trim().split(" ");
       const { data: order, error } = await supabase
         .from("orders")
         .insert({
+          id: orderId,
           type: "meeting",
           customer_first_name: firstName,
           customer_last_name: rest.join(" "),
@@ -60,7 +62,7 @@ export function BookCallModal({ onClose }: { onClose: () => void }) {
       await startStripeCheckout({
         items: [{ name: `${selected.duration_minutes} min strategy session`, amount: selected.price, quantity: 1 }],
         email: form.email,
-        orderId: order.id,
+        orderId: orderId,
         metadata: { type: "meeting", duration: String(selected.duration_minutes) },
       });
     } catch (err: any) {

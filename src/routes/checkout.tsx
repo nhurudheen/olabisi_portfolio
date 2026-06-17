@@ -18,9 +18,11 @@ export default function CheckoutPage() {
     e.preventDefault();
     setBusy(true);
     try {
+      const orderId = crypto.randomUUID();
       const { data: order, error } = await supabase
         .from("orders")
         .insert({
+          id: orderId,
           type: "ebook",
           customer_first_name: form.firstName,
           customer_last_name: form.lastName,
@@ -41,7 +43,7 @@ export default function CheckoutPage() {
       await startStripeCheckout({
         items: items.map((i) => ({ name: i.title, amount: i.price, quantity: i.qty })),
         email: form.email,
-        orderId: order.id,
+        orderId: orderId,
         metadata: { type: "ebook" },
       });
     } catch (err: any) {

@@ -49,9 +49,11 @@ function ServiceBookingModal({ service, onClose }: { service: Service; onClose: 
     if (!date) return toast.error("Please pick a date");
     setBusy(true);
     try {
+      const orderId = crypto.randomUUID();
       const { data: order, error } = await supabase
         .from("orders")
         .insert({
+          id: orderId,
           type: "service",
           customer_first_name: form.firstName,
           customer_last_name: form.lastName,
@@ -78,7 +80,7 @@ function ServiceBookingModal({ service, onClose }: { service: Service; onClose: 
       await startStripeCheckout({
         items: [{ name: service.title, amount: service.price, quantity: 1 }],
         email: form.email,
-        orderId: order.id,
+        orderId: orderId,
         metadata: { type: "service", service: service.title },
       });
     } catch (err: any) {
